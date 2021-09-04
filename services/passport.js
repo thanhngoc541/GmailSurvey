@@ -3,9 +3,9 @@ const GoogleStategy = require('passport-google-oauth20').Strategy;
 const keys = require('../config/keys')
 const mongoose = require('mongoose');
 const User = mongoose.model('users');
-
+    
 passport.serializeUser((user, done) => {
-    done(null, user);
+    done(null, user.id);
 })
 
 passport.deserializeUser((id, done) => {
@@ -16,16 +16,13 @@ passport.use(new GoogleStategy({
     clientSecret: keys.googleClientSecret,
     callbackURL: '/auth/google/callback',
     proxy: true
-}, (accessToken, refreshToken, profile, done) => {
-    User.findOne({ googleId: profile.id })
-        .then((user) => {
-            if (user) {
-                done(null, user);
-            }
-            else {
-                new User({ googleId: profile.id }).save()
-                    .then((user) => done(null, user))
-            }
-
-        })
+}, async (accessToken, refreshToken, profile, done) => {
+    const user = await User.findOne({ googleId: profile.id });
+    if (user) {
+        done(null, user);
+    }
+    else {
+        const newUser = await new User({ googleId: profile.id }).save()
+        done(null, newUser)
+    }
 }));
