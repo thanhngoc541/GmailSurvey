@@ -28,6 +28,6 @@ function Header(props) {
     )
 }
 function mapStateToProps({ auth }) {
-    return { auth   }
+    return { auth }
 }
 export default connect(mapStateToProps)(Header);
