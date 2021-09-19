@@ -9,5 +9,6 @@ export const submitSurvey = (value, history) => async dispatch => {
     const res = await axios.post('/api/surveys', value);
     history.push('/surveys')
     dispatch({ type: type.FETCH_USER, payload: res.data })
-
 }
+export const fetchSurveys = () => async dispatch =>
+    dispatch({ type: type.FETCH_SURVEYS, payload: await (await axios.get('/api/surveys')).data })
